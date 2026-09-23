@@ -2,13 +2,18 @@
   "name": "plixa",
   "version": "0.1.0",
   "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "node --experimental-strip-types --test packages/kernel/src/engine.test.ts"
   },
   "dependencies": {
+    "@plixa/kernel": "*",
     "next": "16.3.6",
     "react": "19.2.8",
     "react-dom": "19.2.8"

@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Plixa
 
-## Getting Started
+Automated floor-plan review for architecture and design-build studios.
 
-First, run the development server:
+The previous product in `pixa` split perception, a compliance kernel, and a Next.js cockpit across Python services. This repo keeps that split, and runs the part that can live on Vercel: the studio, the intermediate representation, and the deterministic IRC kernel.
+
+## Run it
 
 ```bash
+npm install
+npm test
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000), then Studio.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Studio starts with two reviews:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Cedar Court Residence** is a small orthogonal plan with known failures, including an undersized bedroom and a stair riser over 7.75 inches.
+- **Captured sheet 225** is a real IR emitted by the Pixa perception pipeline.
 
-## Learn More
+You can also upload your own IR JSON. The kernel is the only thing that emits pass, fail, or inconclusive.
 
-To learn more about Next.js, take a look at the following resources:
+## What replaced the AWS sketch
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Before | Here |
+| --- | --- |
+| Cognito JWT | Supabase Auth, when you apply `supabase/migrations/0001_studio.sql` |
+| S3 presigned upload | Supabase Storage bucket `plans`, private, keyed by org and project |
+| DynamoDB | Postgres tables `organizations`, `memberships`, `projects` |
+| EventBridge | The review route runs perception lookup and the kernel in one job. A worker URL can sit in front later. |
+| OpenSearch | Postgres search, and the studio search box, always filtered by `org_id` |
+| Lambda + FastAPI | Next.js route handlers on Vercel |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Until those Supabase environment variables exist, reviews persist in `.data/studio.json` on this machine, still scoped to the demo org `org_northline`.
 
-## Deploy on Vercel
+Image perception (CubiCasa and the OCR step) stays in the Python worker from `pixa`. Vercel cannot host that model. Point a future worker at `POST /api/projects` with `source: "uploaded-ir"`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The IRC 2021 pack is loaded as data and is marked pending human certification. Plixa does not issue permits.

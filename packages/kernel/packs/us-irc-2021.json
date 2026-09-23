@@ -1,0 +1,415 @@
+{
+  "jurisdiction": "us-irc-2021",
+  "base": "IRC-2021",
+  "version": "2026.07.2",
+  "certifiedBy": "PENDING_HUMAN_CERTIFICATION",
+  "rules": [
+    {
+      "id": "IRC-R304.1-habitable-area",
+      "title": "Minimum habitable room area",
+      "citation": {
+        "code": "IRC 2021",
+        "section": "R304.1",
+        "textHash": "sha256:R304.1"
+      },
+      "scope": "room",
+      "applies": "room.use == 'habitable'",
+      "check": {
+        "op": ">=",
+        "left": "geom.area_sqft(room)",
+        "right": 70
+      },
+      "severity": "violation",
+      "needs": [
+        "room.polygon"
+      ],
+      "fixHints": [
+        "move_wall",
+        "merge_rooms",
+        "reclassify_room"
+      ],
+      "requirementText": "Habitable rooms shall have a floor area of not less than 70 square feet."
+    },
+    {
+      "id": "IRC-R304.2-habitable-dimension",
+      "title": "Minimum habitable room dimension",
+      "citation": {
+        "code": "IRC 2021",
+        "section": "R304.2",
+        "textHash": "sha256:R304.2"
+      },
+      "scope": "room",
+      "applies": "room.use == 'habitable'",
+      "check": {
+        "op": ">=",
+        "left": "geom.min_horizontal_dimension_ft(room)",
+        "right": 7
+      },
+      "severity": "violation",
+      "needs": [
+        "room.polygon"
+      ],
+      "fixHints": [
+        "move_wall",
+        "merge_rooms"
+      ],
+      "requirementText": "Habitable rooms shall be not less than 7 feet in any horizontal dimension."
+    },
+    {
+      "id": "IRC-R305.1-ceiling-height",
+      "title": "Minimum ceiling height",
+      "citation": {
+        "code": "IRC 2021",
+        "section": "R305.1",
+        "textHash": "sha256:R305.1"
+      },
+      "scope": "room",
+      "applies": "room.use in ['habitable', 'kitchen', 'hallway']",
+      "check": {
+        "op": ">=",
+        "left": "room.ceilingHeight",
+        "right": 7
+      },
+      "severity": "violation",
+      "needs": [
+        "room.ceilingHeight"
+      ],
+      "fixHints": [],
+      "requirementText": "Habitable space, hallways and portions of basements containing these spaces shall have a ceiling height of not less than 7 feet."
+    },
+    {
+      "id": "IRC-R303.1-natural-light",
+      "title": "Natural light glazing ratio",
+      "citation": {
+        "code": "IRC 2021",
+        "section": "R303.1",
+        "textHash": "sha256:R303.1"
+      },
+      "scope": "room",
+      "applies": "room.use == 'habitable'",
+      "check": {
+        "op": ">=",
+        "left": "geom.window_area_ratio(room)",
+        "right": 0.08
+      },
+      "severity": "violation",
+      "needs": [
+        "room.polygon"
+      ],
+      "fixHints": [
+        "add_egress_window",
+        "resize_opening"
+      ],
+      "requirementText": "Habitable rooms shall have an aggregate glazing area of not less than 8 percent of the floor area of such rooms."
+    },
+    {
+      "id": "IRC-R310.1-egress-opening",
+      "title": "Emergency escape and rescue opening",
+      "citation": {
+        "code": "IRC 2021",
+        "section": "R310.1",
+        "textHash": "sha256:R310.1"
+      },
+      "scope": "room",
+      "applies": "room.use == 'bedroom' or 'BED' in room.label or 'Bed' in room.label or 'BR' in room.label or 'MASTER' in room.label or 'Master' in room.label",
+      "check": {
+        "op": "==",
+        "left": "geom.has_egress_opening(room)",
+        "right": true
+      },
+      "severity": "violation",
+      "needs": [
+        "room.polygon"
+      ],
+      "fixHints": [
+        "add_egress_window",
+        "resize_opening"
+      ],
+      "requirementText": "Basements and every sleeping room shall have not less than one operable emergency escape and rescue opening (min 5.7 sq ft, sill height max 44 inches)."
+    },
+    {
+      "id": "IRC-R311.2-egress-door-width",
+      "title": "Egress door clear width",
+      "citation": {
+        "code": "IRC 2021",
+        "section": "R311.2",
+        "textHash": "sha256:R311.2"
+      },
+      "scope": "opening",
+      "applies": "opening.kind == 'door' and opening.egress == True",
+      "check": {
+        "op": ">=",
+        "left": "geom.door_clear_width_in(opening)",
+        "right": 32
+      },
+      "severity": "violation",
+      "needs": [
+        "opening.width"
+      ],
+      "fixHints": [
+        "resize_opening"
+      ],
+      "requirementText": "The required egress door shall provide a clear width of not less than 32 inches."
+    },
+    {
+      "id": "IRC-R311.2-egress-door-height",
+      "title": "Egress door clear height",
+      "citation": {
+        "code": "IRC 2021",
+        "section": "R311.2",
+        "textHash": "sha256:R311.2-height"
+      },
+      "scope": "opening",
+      "applies": "opening.kind == 'door' and opening.egress == True",
+      "check": {
+        "op": ">=",
+        "left": "geom.door_clear_height_in(opening)",
+        "right": 78
+      },
+      "severity": "violation",
+      "needs": [
+        "opening.height"
+      ],
+      "fixHints": [
+        "resize_opening"
+      ],
+      "requirementText": "The required egress door shall provide a clear height of not less than 78 inches, measured from the top of the threshold to the bottom of the stop."
+    },
+    {
+      "id": "IRC-R311.6-hallway-width",
+      "title": "Minimum hallway width",
+      "citation": {
+        "code": "IRC 2021",
+        "section": "R311.6",
+        "textHash": "sha256:R311.6"
+      },
+      "scope": "room",
+      "applies": "room.use == 'hallway'",
+      "check": {
+        "op": ">=",
+        "left": "geom.min_horizontal_dimension_ft(room)",
+        "right": 3
+      },
+      "severity": "violation",
+      "needs": [
+        "room.polygon"
+      ],
+      "fixHints": [
+        "move_wall"
+      ],
+      "requirementText": "The width of a hallway shall be not less than 3 feet."
+    },
+    {
+      "id": "IRC-R311.7.5-stair-rise",
+      "title": "Maximum stair riser height",
+      "citation": {
+        "code": "IRC 2021",
+        "section": "R311.7.5.1",
+        "textHash": "sha256:R311.7.5.1"
+      },
+      "scope": "stair",
+      "applies": "stair.id != None",
+      "check": {
+        "op": "<=",
+        "left": "stair.riseIn",
+        "right": 7.75
+      },
+      "severity": "violation",
+      "needs": [
+        "stair.riseIn"
+      ],
+      "fixHints": [],
+      "requirementText": "The riser height shall be not more than 7-3/4 inches."
+    },
+    {
+      "id": "IRC-R311.7.5-stair-run",
+      "title": "Minimum stair tread depth",
+      "citation": {
+        "code": "IRC 2021",
+        "section": "R311.7.5.2",
+        "textHash": "sha256:R311.7.5.2"
+      },
+      "scope": "stair",
+      "applies": "stair.id != None",
+      "check": {
+        "op": ">=",
+        "left": "stair.runIn",
+        "right": 10
+      },
+      "severity": "violation",
+      "needs": [
+        "stair.runIn"
+      ],
+      "fixHints": [],
+      "requirementText": "The tread depth shall be not less than 10 inches."
+    },
+    {
+      "id": "NEC-210.52-outlet-spacing",
+      "title": "Receptacle outlet spacing",
+      "citation": {
+        "code": "NEC 2023",
+        "section": "210.52(A)(1)",
+        "textHash": "sha256:210.52"
+      },
+      "scope": "room",
+      "applies": "room.use in ['habitable', 'kitchen'] and (room.label == None or 'inferred' not in room.label)",
+      "check": {
+        "op": "<=",
+        "left": "geom.max_outlet_gap_ft(room)",
+        "right": 12
+      },
+      "severity": "violation",
+      "needs": [
+        "room.polygon"
+      ],
+      "fixHints": [
+        "add_outlet"
+      ],
+      "requirementText": "Receptacles shall be installed such that no point along the wall line is more than 6 feet from a receptacle outlet."
+    },
+    {
+      "id": "IRC-R314.3-smoke-detector",
+      "title": "Smoke alarm in sleeping rooms",
+      "citation": {
+        "code": "IRC 2021",
+        "section": "R314.3",
+        "textHash": "sha256:R314.3"
+      },
+      "scope": "room",
+      "applies": "room.label != None and ('BED' in room.label or 'BEDROOM' in room.label or 'MASTER' in room.label or 'SLEEP' in room.label)",
+      "check": {
+        "op": ">=",
+        "left": "geom.detector_count(room, 'smoke')",
+        "right": 1
+      },
+      "severity": "violation",
+      "needs": [
+        "room.polygon"
+      ],
+      "fixHints": [
+        "add_detector"
+      ],
+      "requirementText": "Smoke alarms shall be installed in each sleeping room."
+    },
+    {
+      "id": "IRC-R311.3-egress-path-exists",
+      "title": "Continuous egress path to exterior",
+      "citation": {
+        "code": "IRC 2021",
+        "section": "R311.1",
+        "textHash": "sha256:R311.1"
+      },
+      "scope": "room",
+      "applies": "room.use in ['habitable', 'kitchen']",
+      "check": {
+        "op": "<",
+        "left": "geom.egress_path_length_ft(room)",
+        "right": 999999
+      },
+      "severity": "violation",
+      "needs": [
+        "room.polygon"
+      ],
+      "fixHints": [
+        "relocate_door"
+      ],
+      "requirementText": "Dwellings shall be provided with a means of egress: a continuous and unobstructed path from all portions of the dwelling to the exterior."
+    },
+    {
+      "id": "IRC-R305.1-bathroom-ceiling",
+      "title": "Minimum bathroom ceiling height",
+      "citation": {
+        "code": "IRC 2021",
+        "section": "R305.1 Exc. 2",
+        "textHash": "sha256:R305.1-exc2"
+      },
+      "scope": "room",
+      "applies": "room.use == 'bathroom'",
+      "check": {
+        "op": ">=",
+        "left": "room.ceilingHeight",
+        "right": 6.67
+      },
+      "severity": "violation",
+      "needs": [
+        "room.ceilingHeight"
+      ],
+      "fixHints": [],
+      "requirementText": "Bathrooms, toilet rooms and laundry rooms are permitted a reduced ceiling height, but it shall be not less than 6 feet 8 inches."
+    },
+    {
+      "id": "IRC-R303.1-ventilation-openable",
+      "title": "Natural ventilation openable area",
+      "citation": {
+        "code": "IRC 2021",
+        "section": "R303.1",
+        "textHash": "sha256:R303.1-vent"
+      },
+      "scope": "room",
+      "applies": "room.use == 'habitable'",
+      "check": {
+        "op": ">=",
+        "left": "geom.window_area_ratio(room)",
+        "right": 0.04
+      },
+      "severity": "warning",
+      "needs": [
+        "room.polygon"
+      ],
+      "fixHints": [
+        "add_egress_window",
+        "resize_opening"
+      ],
+      "requirementText": "Openable area to the outdoors for habitable rooms shall be not less than 4 percent of the room floor area, unless whole-house mechanical ventilation is provided. Glazing area is used as the openable-area proxy until sash data is captured."
+    },
+    {
+      "id": "IRC-R315.3-co-alarm",
+      "title": "Carbon monoxide alarm near sleeping rooms",
+      "citation": {
+        "code": "IRC 2021",
+        "section": "R315.3",
+        "textHash": "sha256:R315.3"
+      },
+      "scope": "room",
+      "applies": "room.label != None and ('BED' in room.label or 'BEDROOM' in room.label or 'MASTER' in room.label or 'SLEEP' in room.label)",
+      "check": {
+        "op": ">=",
+        "left": "geom.detector_count(room, 'co')",
+        "right": 1
+      },
+      "severity": "warning",
+      "needs": [
+        "room.polygon"
+      ],
+      "fixHints": [
+        "add_detector"
+      ],
+      "requirementText": "In dwellings with fuel-fired appliances or an attached garage, carbon monoxide alarms shall be installed outside of each separate sleeping area in the immediate vicinity of the bedrooms."
+    },
+    {
+      "id": "IRC-R311.3-egress-path-width",
+      "title": "Minimum egress path width",
+      "citation": {
+        "code": "IRC 2021",
+        "section": "R311.6",
+        "textHash": "sha256:R311.6-path"
+      },
+      "scope": "room",
+      "applies": "room.use in ['habitable', 'kitchen']",
+      "check": {
+        "op": ">=",
+        "left": "geom.egress_path_min_width_in(room)",
+        "right": 36
+      },
+      "severity": "warning",
+      "needs": [
+        "room.polygon"
+      ],
+      "fixHints": [
+        "move_wall",
+        "relocate_door"
+      ],
+      "requirementText": "The egress path serving a room shall maintain a clear width of not less than 3 feet along its route to the exterior."
+    }
+  ]
+}
